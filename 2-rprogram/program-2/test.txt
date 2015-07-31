@@ -1,0 +1,21 @@
+test<-function(){
+        
+        input_matrix<-matrix(c(1,2, 2, 1),2,2)
+                
+        print("Input")
+        print(input_matrix)
+        
+        special_matrix <-makeCacheMatrix(input_matrix)
+        
+        solved_inverse_matrix<-cacheSolve(special_matrix)
+        print("Solved")
+        print(solved_inverse_matrix)
+        
+        check_result_matrix <- input_matrix %*%solved_inverse_matrix
+        
+        print("Cross Checked")
+        print(check_result_matrix)
+        
+        
+        
+}
