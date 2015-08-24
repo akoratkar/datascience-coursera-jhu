@@ -26,67 +26,43 @@ run<-function(){
         
         ##Check if file exists
         filename<-"household_power_consumption.txt"
-        ##filename<-"sample.txt"
         
         if (!file.exists(filename))
                 error("Household Power Consumption data not found!")
         
-        ##Functions to format the date and time 
-        ##setClass("Date_As_dmY")        
-        ##setAs("character","Date_As_dmY", def=function(from) as.Date(dmy(from)))
-        
-        ##setClass("Time_As_HMS")      
-        ##setAs("character","Time_As_HMS", def=function(from) hms(from)
-        ##setAs("character","Time_As_HMS", def=function(from) format(as.POSIXct(from, format="%H:%M:%S"), "%H:%M:%S"))
-        
+      
         ##consumptiondataset <-read.table(filename, header=TRUE, sep=";", na.strings="?", 
                                         ##stringsAsFactors=FALSE,
-                                        ##colClasses=c("Date_As_dmY","Time_As_HMS","numeric",
+                                        ##colClasses=c("character","character","numeric",
                                                     ## "numeric", "numeric", "numeric",
                                                      ##"numeric", "numeric", "numeric")
                                         ##)
-        
-        consumptiondataset <-read.table(filename, header=TRUE, sep=";", na.strings="?", 
-                                        stringsAsFactors=FALSE,
-                                        colClasses=c("character","character","numeric",
-                                        "numeric", "numeric", "numeric",
-                                        "numeric", "numeric", "numeric")
-                                )
-        
+             
         ##Trying to optimize with sqldf, but the where clause is not working
-
-        ##selectstmt<-"select * from file where date(Date,'%Y-%m-%d') between date('2007-02-01', '%Y-%m-%d') and date('2007-02-02','%Y-%m-%d')"
-        ##selectstmt<-"select * from file where Date=date('2007-02-01','%Y-%m-%d') or Date=date('2007-02-02','%Y-%m-%d')"
-        ##selectstmt<-"select * from file where Date='01/02/2007' or Date='02/02/2007'"
+        selectstmt<-"select * from file where Date in ('1/2/2007','2/2/2007')"
         
-        ##consumptiondataset<-read.csv.sql(filename, sql=selectstmt, header=TRUE, sep = ";",
-                                         ##colClasses=c("character","character","numeric",
-                                                      ##"numeric", "numeric", "numeric",
-                                                      ## "numeric", "numeric", "numeric"),
-                                         ##dbname=tempfile(), drv="SQLite")
+        consumptiondataset<-read.csv.sql(filename, sql=selectstmt, header=TRUE, sep = ";",
+                                         colClasses=c("character","character","numeric",
+                                                      "numeric", "numeric", "numeric",
+                                                       "numeric", "numeric", "numeric"),
+                                         dbname=tempfile(), drv="SQLite")
         
         
         ##Mutate to convert Date into Date and Time into POSIXct
         
         consumptiondataset<-mutate(consumptiondataset, Date=as.Date(dmy(Date)), Time=ymd_hms(paste(Date, Time)))
-        consumptiondataset<-subset(consumptiondataset, Date>=as.Date("2007-02-01") & Date<=as.Date("2007-02-02"), na.rm=TRUE)
+        ##consumptiondataset<-subset(consumptiondataset, Date>=as.Date("2007-02-01") & Date<=as.Date("2007-02-02"), na.rm=TRUE)
         
-        ##consumptiondataset<-subset(consumptiondataset, Date>=as.Date("2006-12-16") & Date<=as.Date("2006-12-16"), na.rm=TRUE)
-        
-        ##print(str(consumptiondataset))
+       
+        print(str(consumptiondataset))
         print(paste("Size of the data set for plotting", nrow(consumptiondataset)))
         
-        ##print(head(consumptiondataset,3))        
-        ##print(tail(consumptiondataset, 3))
-        
-        
+
         ##1 Histogram of Global Active Power
         png(file="plot1.png", width = 480, height = 480)
         par(mfcol=c(1,1))
         hist(consumptiondataset$Global_active_power, xlab="Global Active Power (kilowatts)", 
                 ylab="Frequency", main="Global Active Power", col="red")
-        
-        ##dev.copy(png, file="plot1.png", width = 480, height = 480)
         
         dev.off()
         print("Plo1 1 successfully generated in Plot1.png")
@@ -124,7 +100,6 @@ run<-function(){
         })
         
         dev.off()
-        
         print("Plo1 3 successfully generated in Plot3.png")
         
         ##4 All the plots together
@@ -160,7 +135,7 @@ run<-function(){
         })
         
         dev.off()
-        
+
         print("Plo1 4 successfully generated in Plot4.png")
         print('...Program successfully executed')
         
