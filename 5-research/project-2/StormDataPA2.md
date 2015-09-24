@@ -197,7 +197,7 @@ Refer to Plot 2 and Table 2 to review the economic cost of top 25 events.
 ```
 
 <!-- html table generated in R 3.2.0 by xtable 1.7-4 package -->
-<!-- Thu Sep 24 14:49:42 2015 -->
+<!-- Thu Sep 24 15:49:25 2015 -->
 <table border=1>
 <caption align="bottom"> Table 1: Health Impact for top 25 event types </caption>
 <tr> <th>  </th> <th> EVTYPE </th> <th> FATALITIES </th> <th> INJURIES </th> <th> HEALTHIMPACT </th>  </tr>
@@ -279,7 +279,7 @@ Refer to Plot 2 and Table 2 to review the economic cost of top 25 events.
 ```
 
 <!-- html table generated in R 3.2.0 by xtable 1.7-4 package -->
-<!-- Thu Sep 24 14:49:42 2015 -->
+<!-- Thu Sep 24 15:49:26 2015 -->
 <table border=1>
 <caption align="bottom"> Table 2: Economic Cost for top 25 event types </caption>
 <tr> <th>  </th> <th> EVTYPE </th> <th> PROPDMG </th> <th> CROPDMG </th> <th> ECONOMICCOST </th>  </tr>
