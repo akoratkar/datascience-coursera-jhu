@@ -1,0 +1,253 @@
+---
+title: "NOAA Storm Database Exploration for Health Impact and Economic Cost"
+author: "AK"
+date: "09/25/2015"
+output: 
+  html_document:
+    keep_md: true
+---
+
+##Synopsis
+The objective of this report is to present the analysis done on the NOAA Storm database to determine the health impact and economic costs of severe weather events such as tornodoes, thundurstorms, earthquake etc and determine the weather event that has the most impact. The harm to the population health was calculated as a sum of the fatalities and injuries while the economic cost was calculated as a sum of the property damage and crop damage in dollars (after factoring in the exponents post some clean-up). The entire analysis (including data download, pre-processing, clean-up and exploratory analysis) was done programatically for complete reproducibility using publicly available R-packages. The complete historically data (total records: 902297) was considered in the analysis without any specific weightings for the time and place of the data capture. Though there are a total of 985 weather events captured in the database since 1950, only 48 weather events are currently prevalent. Some basic clean-up relevant to address the questions was done to normalize these events as most others are non-consequential. Only top 25 events sorted by health impact and economic cost have been summarized in the figures for ease of presentation and review.
+
+##Results:
+
+Based on the analysis, it was determined that: 
+
+- **Tornadoes are most harmful to the health of the population. Tornadoes cause a total of 5658 fatalities and 91364 injuries (total health impact: 97022).**  
+Refer to Plot 1 and Table 1 to review the health impact of top 25 events.
+
+- **Tornadoes are most impactful in terms of the economic cost. Tornadoes cause a total of 43,631,180,105 (~42Bn) in total cost (property damage: 43,487,203,105 and crop damage: 143,977,000**  
+Refer to Plot 2 and Table 2 to review the economic cost of top 25 events.
+
+- **The findings for the top 5 w.r.t health impact and the economic cost seem logical (related to tornadoes, storms, floods, heat and winds)**
+
+## Data Processing
+
+```{r setoptions,echo=TRUE} 
+
+        ##Setting the global options
+        suppressWarnings(library(knitr))
+        opts_chunk$set(echo = TRUE)
+        opts_chunk$set(fig.path = "./figures/")
+
+```
+
+```{r libraries}
+
+        ##Load all the required libraries for the program
+        ##Ignore the warnings as those have been checked to be harmless
+        suppressWarnings(library(lubridate)) ##Required for date manipulation
+        suppressWarnings(library(reshape2)) ##For melt and cast
+        suppressWarnings(library(lattice)) ##Will use Lattice Graphing system for the last plot
+        suppressWarnings(suppressMessages(library(dplyr)))##Required to mutate
+        suppressWarnings(library(xtable)) ##To output tables
+
+```
+
+
+```{r loaddata}
+
+        ##---Start of Code for downloading, reading and preprocessing data ---
+
+        ##Download and unzip the data file
+        zippeddataURL<-("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2")
+
+        ##Download the Zip File only if it is not already there.
+        zippeddatafile <-"StormData.csv.bz2"
+        if (!file.exists(zippeddatafile)){                
+                download.file(zippeddataURL, zippeddatafile)
+                dateDownloaded<-date()                                        
+        }
+                
+        ##Now read the file in with the right parameters.
+        stormdata <-read.table(zippeddatafile, header=TRUE, sep=",", na.strings="NA", 
+                                stringsAsFactors=FALSE)
+
+        ##Total number of entries
+        entries<-nrow(stormdata) ##902297. So file read correctly.
+
+        ##Let us first see how many unique event types are in the storm data 
+        eventtypesindata<-unique(stormdata$EVTYPE)
+
+        ##---End of Code for downloading, reading and preprocessing data ---
+                        
+```
+
+- The total number of records in the NOAA storm data is **`r entries`**
+- The total number of initial unique event types in the storm data is **`r length(eventtypesindata)`**
+
+```{r cleandata}
+
+        ##Normalize the PROPEXP and CROPEXP columns. 
+  uniqueexp<-unique(stormdata$PROPDMGEXP)
+        ##[1] "K" "M" ""  "B" "m" "+" "0" "5" "6" "?" "4" "2" "3" "h" "7" "H" "-" "1" "8"
+        
+        uniqueexp<-unique(stormdata$CROPDMGEXP)
+        ##[1] ""  "M" "K" "m" "B" "?" "0" "k" "2"
+        
+        ##It is clear that there are some additional values. Data operators seem to have interpreted exponents as generic rather than just use K, M, B. So 2 is x100, 3 is x1000, 4 is x10000 etc.
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="H")]<-2
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="h")]<-2
+        
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="K")]<-3
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="k")]<-3
+        
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="M")]<-6
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="m")]<-6
+        
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="B")]<-9
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="b")]<-9
+        
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="")]<-0
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="?")]<-0
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="+")]<-0
+        stormdata$PROPDMGEXP[which(stormdata$PROPDMGEXP=="-")]<-0          
+        
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="H")]<-2
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="h")]<-2
+        
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="K")]<-3
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="k")]<-3
+        
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="M")]<-6
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="m")]<-6
+        
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="B")]<-9
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="b")]<-9
+        
+        
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="")]<-0
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="?")]<-0
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="+")]<-0
+        stormdata$CROPDMGEXP[which(stormdata$CROPDMGEXP=="-")]<-0  
+
+        ##This standard event type list is retrieved from the Storm Data Event Table on Page 6
+        ##https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
+
+        stdeventypes<-c(
+        "Astronomical Low Tide","Avalanche","Blizzard","Coastal Flood","Cold/Wind Chill",
+        "Debris Flow","Dense Fog","Dense Smoke","Drought","Dust Devil","Dust Storm",
+        "Excessive Heat","Extreme Cold/Wind Chill","Flash Flood","Flood","Frost/Freeze",
+        "Funnel Cloud","Freezing Fog","Hail","Heat","Heavy Rain","Heavy Snow","High Surf",
+        "High Wind","Hurricane/Typhoon","Ice Storm","Lake-Effect Snow","Lakeshore Flood",
+        "Lightning","Marine Hail","Marine High Wind","Marine Strong Wind",
+        "Marine Thunderstorm Wind","Rip Current","Seiche","Sleet","Storm Surge/Tide",
+        "Strong Wind","Thunderstorm Wind","Tornado","Tropical Depression","Tropical Storm",
+        "Tsunami","Volcanic Ash","Waterspout","Wildfire","Winter Storm","Winter Weather")
+
+        ##Pass 1: Correct event types that start with the standard ones above
+        for (i in 1:length(stdeventypes)){
+                stormdata$EVTYPE[grep(paste0("^", stdeventypes[i]), stormdata$EVTYPE, ignore.case=T)]<-stdeventypes[i]
+        }
+
+        ##Pass 2: Correct the few top events
+        stormdata$EVTYPE[grep("^TSTM WIND",stormdata$EVTYPE, ignore.case=T)]<- "Thunderstorm Wind"
+        stormdata$EVTYPE[grep("^FOG",stormdata$EVTYPE, ignore.case=T)]<- "Dense Fog"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="WILD/FOREST FIRE")]<-"Wildfire"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="WILD FIRES")]<-"Wildfire"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="HEAT WAVE")]<-"Excessive Heat"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="EXTREME HEAT")]<-"Excessive Heat"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="STORM SURGE")]<-"Storm Surge/Tide"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="TYPHOON")]<-"Hurricane/Typhoon"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="WINTRY MIX")]<-"Winter Weather"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="GLAZE")]<-"Sleet"
+        stormdata$EVTYPE[grep("^HURRICANE",stormdata$EVTYPE, ignore.case=T)]<- "Hurricane/Typhoon"
+        stormdata$EVTYPE[grep("^GUSTY WIND",stormdata$EVTYPE, ignore.case=T)]<- "Strong Wind"
+        stormdata$EVTYPE[grep("^WIND",stormdata$EVTYPE, ignore.case=T)]<- "High Wind"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="EXTREME COLD")]<-"Extreme Cold/Wind Chill"
+        stormdata$EVTYPE[which(stormdata$EVTYPE=="EXCESSIVE RAINFALL")]<-"Heavy Rain"
+        stormdata$EVTYPE[grep("^FREEZE",stormdata$EVTYPE, ignore.case=T)]<- "Frost/Freeze"
+        stormdata$EVTYPE[grep("^SNOW",stormdata$EVTYPE, ignore.case=T)]<- "Heavy Snow"
+        stormdata$EVTYPE[grep("^ICE",stormdata$EVTYPE, ignore.case=T)]<- "Ice Storm"
+
+        ##Assuming that Landslies are caused by Heavy Rains
+        stormdata$EVTYPE[grep("^LANDSLIDE",stormdata$EVTYPE, ignore.case=T)]<-"Heavy Rain"
+
+```
+
+###Q1: Across the United States, which types of events are most harmful with respect to population health?
+
+```{r healthimpact, results='asis'}
+
+        ##---Start of Code to Answer Q1 ---
+        ##Using storm data frame from loaddata r code chunk above. Remove the NAs. Retain values that are non-zero.  This is being done given the question to be answered w.r.t fatalities and injuries (harmful to population health)
+        stormdata<-subset(stormdata, !is.na(FATALITIES) & !is.na(INJURIES) & (FATALITIES>0 | INJURIES>0))
+
+        ##One can use group by approach below but I like melt and cast
+        ##Now melt the data set with event type as ID.
+        meltedstormdatabyevent <- melt(stormdata, id.vars = c("EVTYPE"), measure.vars=c("FATALITIES", "INJURIES"))
+        
+        ##Then cast the data set with event type as ID and calculate the average by event type
+        castedstormdatabyevent <- dcast(meltedstormdatabyevent, EVTYPE~variable,sum)
+                                
+        ##Introduce a column HEALTHIMPACT that is a sum of FATALITIES and INJURIES
+        castedstormdatabyevent <- mutate(castedstormdatabyevent, HEALTHIMPACT=round(FATALITIES+INJURIES))
+        
+        ##Order by HEALTHIMPACT
+        castedstormdatabyevent<-arrange(castedstormdatabyevent,desc(HEALTHIMPACT))
+
+        ##Get the max health impact and the corresponding event
+        maxheathimpact<-max(castedstormdatabyevent$HEALTHIMPACT)
+        eventtypewithmaxheathimpact<-castedstormdatabyevent[which(castedstormdatabyevent$HEALTHIMPACT==maxheathimpact), ][1,1]
+
+        ##Plot and print the table for Top 25 events only
+        top25<-head(castedstormdatabyevent, 25)
+        par(mfcol=c(1,1))
+        barplot(top25$HEALTHIMPACT, names.arg=top25$EVTYPE, main="Plot 1: Health Impact (Fatalities  +Injuries) vs Event Types", 
+          xlab="Event Types", ylab="Health Impact", col=rainbow(25))
+
+        healthimpact<-xtable(top25, caption="Table 1: Health Impact for top 25 event types")
+        print(healthimpact, type="html")
+                       
+        ##---End of Code to Answer Q1 ---
+        
+```
+
+- The maximum health impact is due to event **`r eventtypewithmaxheathimpact`** in terms of total human fatalities and injuries of **`r prettyNum(maxheathimpact, big.mark=",")`**
+
+###Q2: Across the United States, which types of events have the greatest economic consequences?
+
+```{r economiccost, results='asis'}
+
+        ##---Start of Code to Answer Q2 ---
+        ##Using storm data frame from loaddata r code chunk above. Remove the NAs. Retain values that are non-zero.  This is being done given the question to be answered w.r.t property damage and crop damage (economic cost)
+        stormdata<-subset(stormdata, !is.na(PROPDMG) & !is.na(CROPDMG) & (PROPDMG>0 | CROPDMG>0))
+
+         
+                
+        ##Convert the Property Damage and Crop Damage Cost using the repaired exponents
+        stormdata <- mutate(stormdata, PROPDMG=PROPDMG*(10^(as.numeric(PROPDMGEXP))), CROPDMG=CROPDMG*(10^(as.numeric(CROPDMGEXP))))
+
+        ##One can use group by approach below but I like melt and cast
+        ##Now melt the data set with event type as ID.
+        meltedstormdatabyevent <- melt(stormdata, id.vars = c("EVTYPE"), measure.vars=c("PROPDMG", "CROPDMG"))
+        
+        ##Then cast the data set with event type as ID and calculate the average by event type
+        castedstormdatabyevent <- dcast(meltedstormdatabyevent, EVTYPE~variable,sum)
+                                
+        ##Introduce a column ECONOMICCOST that is a sum of PROPDMG and CROPDMG
+        castedstormdatabyevent <- mutate(castedstormdatabyevent, ECONOMICCOST=round(PROPDMG+CROPDMG))
+
+        ##Order by ECONOMICCOST
+        castedstormdatabyevent<-arrange(castedstormdatabyevent,desc(ECONOMICCOST))
+          
+        ##Get the max economic cost and the corresponding event
+        maxeconomiccost<-max(castedstormdatabyevent$ECONOMICCOST)
+        eventtypewithmaxeconomiccost<-castedstormdatabyevent[which(castedstormdatabyevent$ECONOMICCOST==maxeconomiccost), ][1,1]
+        
+        ##Plot and print the table for Top 25 events only
+        top25<-head(castedstormdatabyevent, 25)
+        par(mfcol=c(1,1))
+        barplot(top25$ECONOMICCOST, names.arg=top25$EVTYPE, main="Plot 2: Economic Cost (Property + Crop Damage) vs Event Types", 
+          xlab="Event Types", ylab="Economic Cost", col=rainbow(25))
+        
+        economiccost<-xtable(top25, caption="Table 2: Economic Cost for top 25 event types")
+        print(economiccost, type="html")
+                       
+        ##---End of Code to Answer Q2 ---
+        
+```
+- The maximum economic cost is due to event **`r eventtypewithmaxeconomiccost`** with a total cost of **`r prettyNum(maxeconomiccost, big.mark=",")`**
+
+**--------------------------------------------End of the report--------------------------------------------------**
