@@ -1,0 +1,248 @@
+---
+title: "NOAA Storm Database Exploration for Health Impact and Economic Cost"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setoptions,echo=TRUE} 
+        suppressWarnings(library(knitr))
+        opts_chunk$set(echo = TRUE)
+        opts_chunk$set(fig.path = "./figures/")
+
+```
+
+```{r libraries}
+
+        ##Load all the required libraries for the program
+        ##Ignore the warnings as those have been checked to be harmless
+        
+        suppressWarnings(library(lubridate)) ##Required for date manipulation
+        suppressWarnings(library(reshape2)) ##For melt and cast
+        suppressWarnings(library(lattice)) ##Will use Lattice Graphing system for the last plot
+        suppressWarnings(suppressMessages(library(dplyr)))##Required to mutate
+        suppressWarnings(library(xtable)) ##To output tables
+
+```
+
+## Loading and preprocessing the data
+```{r loaddata}
+
+        ##---Start of Code for downloading, reading and preprocessing data ---
+
+        ##Download and unzip the data file
+        zippeddataURL<-("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2")
+
+        ##Download the Zip File only if it is not already there.
+        zippeddatafile <-"StormData.csv.bz2"
+
+        if (!file.exists(zippeddatafile)){                
+                download.file(zippeddataURL, zippeddatafile)
+                dateDownloaded<-date()                                        
+        }
+                
+        ##Now read the file in with the right parameters.
+        wipstormdata <-read.table(zippeddatafile, header=TRUE, sep=",", na.strings="NA", 
+                                stringsAsFactors=FALSE)
+
+        ##Total number of entries
+        entries<-nrow(wipstormdata) ##902297. So file read correctly.
+
+        ##Let us first see how many unique event types are in the storm data 
+        eventtypesindata<-unique(wipstormdata$EVTYPE)
+                        
+```
+
+- The total number of records read is **`r entries`**
+- The total number of unique event types in the storm data is **`r length(eventtypesindata)`**
+
+
+##Q1: Across the United States, which types of events are most harmful with respect to population health?
+
+```{r healthimpact, results='asis'}
+
+        ##---Start of Code to Answer Q1 ---
+        ##Using storm data frame from loaddata r code chunk above. Remove the NAs. Retain values that are non-zero.  This is being done given the question to be answered w.r.t fatalities and injuries (harmful to population health)
+        wipstormdata<-subset(wipstormdata, !is.na(FATALITIES) & !is.na(INJURIES) & (FATALITIES>0 | INJURIES>0))
+
+        ##One can use group by approach below but I like melt and cast
+        ##Now melt the data set with event type as ID.
+        meltedstormdatabyevent <- melt(wipstormdata, id.vars = c("EVTYPE"), measure.vars=c("FATALITIES", "INJURIES"))
+        
+        ##Then cast the data set with event type as ID and calculate the average by event type
+        castedstormdatabyevent <- dcast(meltedstormdatabyevent, EVTYPE~variable,sum)
+                                
+        ##Introduce a column HEALTHIMPACT that is a sum of FATALITIES and INJURIES
+        castedstormdatabyevent <- mutate(castedstormdatabyevent, HEALTHIMPACT=round(FATALITIES+INJURIES))
+        
+        ##Order by HEALTHIMPACT
+        castedstormdatabyevent<-arrange(castedstormdatabyevent,desc(HEALTHIMPACT))
+
+        ##Get the max health impact and the corresponding event
+        maxheathimpact<-max(castedstormdatabyevent$HEALTHIMPACT)
+        eventtypewithmaxheathimpact<-castedstormdatabyevent[which(castedstormdatabyevent$HEALTHIMPACT==maxheathimpact), ][1,1]
+
+        top25<-head(castedstormdatabyevent, 25)
+        par(mfcol=c(1,1))
+        barplot(top25$HEALTHIMPACT, names.arg=top25$EVTYPE, main="Plot 1: Health Impact (Fatalities+Injuries) vs Event Types", 
+          xlab="Event Types", ylab="Health Impact", col=rainbow(25))
+
+        ##Print the table (the top 25 rows)
+        ##top25<-mutate(top25, FATALITIES=prettyNum(FATALITIES, big.mark=","),INJURIES=prettyNum(INJURIES, big.mark=","), HEALTHIMPACT=prettyNum(HEALTHIMPACT, big.mark=","))
+
+        healthimpact<-xtable(top25, caption="Table 1: Health Impact for top 25 event types")
+        print(healthimpact, type="html")
+                       
+        ##---End of Code to Answer Q1 ---
+        
+```
+
+- The maximum health impact is due to event **`r eventtypewithmaxheathimpact`** in terms of total human fatalities and injuries of **`r prettyNum(maxheathimpact, big.mark=",")`**
+
+##Q2: Across the United States, which types of events have the greatest economic consequences?
+
+```{r economiccost, results='asis'}
+
+        ##---Start of Code to Answer Q2 ---
+        ##Using storm data frame from loaddata r code chunk above. Remove the NAs. Retain values that are non-zero.  This is being done given the question to be answered w.r.t property damage and crop damage (economic cost)
+        wipstormdata<-subset(wipstormdata, !is.na(PROPDMG) & !is.na(CROPDMG) & (PROPDMG>0 | CROPDMG>0))
+
+        ##Normalize the PROPEXP and CROPEXP columns. See the function at the end in chunk fixexponents
+        uniqueexp<-unique(wipstormdata$PROPDMGEXP)
+                ##[1] "K" "M" ""  "B" "m" "+" "0" "5" "6" "?" "4" "2" "3" "h" "7" "H" "-" "1" "8"
+
+        uniqueexp<-unique(wipstormdata$CROPDMGEXP)
+        ##[1] ""  "M" "K" "m" "B" "?" "0" "k" "2"
+
+        ##It is clear that there are some additional values. Data operators seem to be indepreted                         these as truely exponential. So 2 is x100, 3 is x1000, 4 is x10000 etc.
+
+        ##So lets standardize
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="H")]<-2
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="h")]<-2
+
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="K")]<-3
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="k")]<-3
+
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="M")]<-6
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="m")]<-6
+
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="B")]<-9
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="b")]<-9
+
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="")]<-0
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="?")]<-0
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="+")]<-0
+        wipstormdata$PROPDMGEXP[which(wipstormdata$PROPDMGEXP=="-")]<-0          
+
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="H")]<-2
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="h")]<-2
+
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="K")]<-3
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="k")]<-3
+
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="M")]<-6
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="m")]<-6
+
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="B")]<-9
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="b")]<-9
+
+
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="")]<-0
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="?")]<-0
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="+")]<-0
+        wipstormdata$CROPDMGEXP[which(wipstormdata$CROPDMGEXP=="-")]<-0   
+        
+        ##Convert the Property Damage and Crop Damage Cost using the repaired exponents
+        wipstormdata <- mutate(wipstormdata, PROPDMG=PROPDMG*(10^(as.numeric(PROPDMGEXP))), CROPDMG=CROPDMG*(10^(as.numeric(CROPDMGEXP))))
+
+        ##One can use group by approach below but I like melt and cast
+        ##Now melt the data set with event type as ID.
+        meltedstormdatabyevent <- melt(wipstormdata, id.vars = c("EVTYPE"), measure.vars=c("PROPDMG", "CROPDMG"))
+        
+        ##Then cast the data set with event type as ID and calculate the average by event type
+        castedstormdatabyevent <- dcast(meltedstormdatabyevent, EVTYPE~variable,sum)
+                                
+        ##Introduce a column ECONOMICCOST that is a sum of PROPDMG and CROPDMG
+        castedstormdatabyevent <- mutate(castedstormdatabyevent, ECONOMICCOST=round(PROPDMG+CROPDMG))
+
+        ##Order by ECONOMICCOST
+        castedstormdatabyevent<-arrange(castedstormdatabyevent,desc(ECONOMICCOST))
+          
+        ##Get the max economic cost and the corresponding event
+        maxeconomiccost<-max(castedstormdatabyevent$ECONOMICCOST)
+        eventtypewithmaxeconomiccost<-castedstormdatabyevent[which(castedstormdatabyevent$ECONOMICCOST==maxeconomiccost), ][1,1]
+        
+        top25<-head(castedstormdatabyevent, 25)
+        par(mfcol=c(1,1))
+        barplot(top25$ECONOMICCOST, names.arg=top25$EVTYPE, main="Plot 2: Economic Cost (Property+Crop) vs Event Types", 
+          xlab="Event Types", ylab="Economic Cost", col=rainbow(25))
+        
+        ##Print the table. Top 25 rows only
+
+        ##top25<-mutate(top25, PROPDMG=prettyNum(PROPDMG, big.mark=","),CROPDMG=prettyNum(CROPDMG, big.mark=","), ECONOMICCOST=prettyNum(ECONOMICCOST, big.mark=","))
+
+        economiccost<-xtable(top25, caption="Table 2: Economic Cost for top 25 event types")
+        print(economiccost, type="html")
+                       
+        ##---End of Code to Answer Q2 ---
+        
+```
+- The maximum cost impact is due to event **`r eventtypewithmaxeconomiccost`** in terms of total cost of **`r prettyNum(maxeconomiccost, big.mark=",")`**
+
+```{r eventtypes, echo=FALSE}
+        ##Populate the list of 48 standard event types. Setting echo=FALSE just for this chunk. 
+        x<-function(){}
+
+        stdeventypes<-c(
+                "Astronomical Low Tide",
+                "Avalanche",
+                "Blizzard",
+                "Coastal Flood",
+                "Cold/Wind Chill", 
+                "Debris Flow",
+                "Dense Fog",
+                "Dense Smoke",
+                "Drought",
+                "Dust Devil",
+                "Dust Storm",
+                "Excessive Heat",
+                "Extreme Cold/Wind Chill",
+                "Flash Flood",
+                "Flood",
+                "Frost/Freeze",
+                "Funnel Cloud",
+                "Freezing Fog",
+                "Hail",
+                "Heat",
+                "Heavy Rain",
+                "Heavy Snow",
+                "High Surf",
+                "High Wind",
+                "Hurricane (Typhoon)",
+                "Ice Storm",
+                "Lake-Effect Snow",
+                "Lakeshore Flood",
+                "Lightning",
+                "Marine Hail",
+                "Marine High Wind",
+                "Marine Strong Wind",
+                "Marine Thunderstorm Wind",
+                "Rip Current",
+                "Seiche",
+                "Sleet",
+                "Storm Surge/Tide",
+                "Strong Wind",
+                "Thunderstorm Wind",
+                "Tornado",
+                "Tropical Depression",
+                "Tropical Storm",
+                "Tsunami",
+                "Volcanic Ash",
+                "Waterspout",
+                "Wildfire",
+                "Winter Storm",
+                "Winter Weather")
+
+```
+
+**--------------------------------------------End of the report--------------------------------------------------**
