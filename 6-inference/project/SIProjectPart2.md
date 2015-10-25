@@ -83,7 +83,7 @@ Here is the description of the tooth growth data set:
         legend("topright", levels(df10$supp.f), fill=colfill)
 
         df20$supp.f <- factor(df20$supp, levels= c("OJ", "VC"),labels = c("OJ", "VC"))
-        sm.density.compare(df05$len, df20$supp, xlab="len")
+        sm.density.compare(df20$len, df20$supp, xlab="len")
         title(main="Tooth Growth for dose=2.0")
         colfill<-c(2:(2+length(levels(df20$supp.f)))) 
         legend("topright", levels(df20$supp.f), fill=colfill)
@@ -131,7 +131,7 @@ Here is the description of the tooth growth data set:
 ```
 
 <!-- html table generated in R 3.2.0 by xtable 1.7-4 package -->
-<!-- Sat Oct 24 22:06:15 2015 -->
+<!-- Sat Oct 24 22:56:08 2015 -->
 <table border=1>
 <caption align="bottom"> Table 1: T Intervals </caption>
 <tr> <th>  </th> <th> group1 </th> <th> group2 </th> <th> tlow </th> <th> thigh </th>  </tr>
