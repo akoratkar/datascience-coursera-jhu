@@ -1,0 +1,250 @@
+We can show that, if the population is infinite, the variance of the sample mean is the population
+| variance divided by the sample size. Specifically, Var(X') = sigma^2 / n. Let's work through this
+| in four short steps.
+
+...
+
+  |===========================================                                                 |  47%
+
+| Which of the following does Var(X') equal? Here X' represents the sample mean and 'Sum(X_i)'
+| represents the sum of the n samples X_1,...X_n. Assume these samples are independent.
+
+1: Var(1/n * Sum(X_i))
+2: sigma
+3: E(1/n * Sum(X_i))
+4: mu
+
+Selection: 1
+
+| You got it right!
+
+  |=============================================                                               |  49%
+
+| Which of the following does Var(1/n * Sum(X_i)') equal?
+
+1: mu/n^2
+2: 1/n^2*Var(Sum(X_i))
+3: sigma/n
+4: 1/n^2*E(Sum(X_i))
+
+Selection: 2
+
+| Keep working like that and you'll get there!
+
+  |===============================================                                             |  51%
+
+| Recall that Var is an expected value and expected values are linear. Also recall that our samples
+| X_1, X_2,...,X_n are independent. What does Var(Sum(X_i)) equal?
+
+1: E(Sum(X_i))
+2: Var(sigma)
+3: E(mu)
+4: Sum(Var(X_i))
+
+Selection: 4
+
+| You got it right!
+
+  |=================================================                                           |  53%
+
+| Finally, each X_i comes from a population with variance sigma^2. What does Sum(Var(X_i)) equal? As
+| before, Sum is taken over n values.
+
+1: n*(sigma)^2
+2: (n^2)*Var(sigma)
+3: n*E(mu)
+4: n*mu
+
+Selection: 1
+
+| Excellent work!
+
+  |===================================================                                         |  55%
+
+| So we've shown that Var(X')=Var(1/n*Sum(X_i))=(1/n^2)*Var(Sum(X_i))=(1/n^2)*Sum(sigm^2)=sigma^2/n
+| for infinite populations when our samples are independent.
+
+qnorm(pnorm(.53)) :53
+
+ Poisson random variables are used to model rates such as the rate of hard drive failures. We write
+| X~Poisson(lambda*t) where lambda is the expected count per unit of time and t is the total
+| monitoring time.
+
+the Poisson distribution approximates the binomial distribution in certain cases. Recall
+| that the binomial distribution is the discrete distribution of the number of successes, k, out of n
+| independent binary trials, each with probability p. If n is large and p is small then the Poisson
+| distribution with lambda equal to n*p is a good approximation to the binomial distribution.
+
+ Let's dissect this to see what it means. First, 'properly normalized' means that you transformed
+| the sample mean X'. You subtracted the population mean mu from it and divided the difference by
+| sigma/sqrt(n). Here sigma is the standard deviation of the population and n is the sample size.
+
+Second, the CLT says that for large n, this normalized variable, (X'-mu)/(sigma/sqrt(n)) is almost
+| normally distributed with mean 0 and variance 1. Remember that n must be large for the CLT to
+| apply.
+
+
+ Let's rephrase the CLT. Suppose X_1, X_2, ... X_n are independent, identically distributed random
+| variables from an infinite population with mean mu and variance sigma^2. Then if n is large, the
+| mean of the X's, call it X', is approximately normal with mean mu and variance sigma^2/n. We denote
+| this as X'~N(mu,sigma^2/n).
+
+ We know from the CLT that for large n, the sample mean is normal with mean mu and standard
+| deviation sigma/sqrt(n).
+
+| Note that for a 95% confidence interval we divide (100-95) by 2 (since we have both left and right
+| tails) and add the result to 95 to compute the quantile we need. The 97.5 quantile is actually
+| 1.96, but for simplicity it's often just rounded up to 2. If you wanted to find a 90% confidence
+| interval what quantile would you want?
+
+1: 85
+2: 95
+3: 90
+4: 100
+
+As we've seen before, in a binomial distribution in which p represents the probability or
+| proportion of success, the variance sigma^2 is p(1-p), so the standard error of the sample mean p'
+| is sqrt(p(1-p)/n) where n is the sample size. The 95% confidence interval of p is then p' +/-
+| 2*sqrt(p(1-p)/n). The 2 in this formula represents what?
+
+| Here's another example of applying this formula from the slides. Suppose you were running for
+| office and your pollster polled 100 people. Of these 60 claimed they were going to vote for you.
+| You'd like to estimate the true proportion of people who will vote for you and you want to be 95%
+| confident of your estimate. We need to find the limits that will contain the true proportion of
+| your supporters with 95% confidence, so we'll use the formula p' +/- 1/sqrt(n) to answer this
+| question. First, what value would you use for p', the sampled estimate?
+
+1: .56
+2: .60
+3: 1.00
+4: .10
+
+Selection: 2
+
+| Excellent job!
+
+  |=========================================                                                   |  44%
+
+| What would you use for 1/sqrt(n)?
+
+1: 1/10
+2: 1/sqrt(56)
+3: 1/sqrt(60)
+4: 1/100
+
+Selection: 1
+
+| Excellent work!
+
+  |==========================================                                                  |  46%
+
+| The bounds of the interval then are what?
+
+1: .46 and .66
+2: .55 and .65
+3: I haven't a clue
+4: .5 and .7
+
+Est +/- qnorm *std error(Est): qnorm; normal quantilr
+Z statistic Z=(X'-mu)/(sigma/sqrt(n))
+T statistic t=(X'-mu)/(s/sqrt(n))
+
+Est +/- t-quantile *std error(Est)
+
+As df increases, the t distribution gets more like a standard normal, so it's centered around 0. Also, the t
+| assumes that the underlying data are iid Gaussian so the statistic (X' - mu)/(s/sqrt(n)) has n-1 degrees of freedom. df=n-1, n is number of data points (sample size)
+
+| Check the placement of the horizontal now using the R function qt with the arguments .975 for the quantile and 2 for the degrees of freedom (df).
+
+> qt(0.975, 2)
+[1] 4.302653
+
+t interval is always wider than the normal. This is because estimating the standard
+deviation introduces more uncertainty so a wider interval results.
+
+t-interval is defined as X' +/- t_(n-1)*s/sqrt(n) where t_(n-1) is the relevant quantile.
+
+*Groups with pairing
+
+e.g. mn + c(-1,1)*qt(.975,9)*s/sqrt(10); n=10; 95% internal; 0.975=0.95+0.025
+
+This says that with probability .95 the average difference of effects (between the two drugs) for an
+| individual patient is between .7 and 2.46 additional hours of sleep.
+
+Same as > t.test(difference)$conf.int
+[1] 0.7001142 2.4598858
+attr(,"conf.level")
+[1] 0.95
+
+#show 4 different calls to t.test
+#display as 4 long array
+rbind(
+  mn + c(-1, 1) * qt(.975, n-1) * s / sqrt(n),
+  as.vector(t.test(difference)$conf.int),
+  as.vector(t.test(g2, g1, paired = TRUE)$conf.int),
+  as.vector(t.test(extra ~ I(relevel(group, 2)), paired = TRUE, data = sleep)$conf.int)
+
+*Independent Groups with Pooling
+
+(n_x-1)(S_x)^2+(n_y-1)(S_y)^2
+ns<-(n_x-1)+(n_y-1)
+sp <- sqrt(sp/ns)
+sqrt(sum(1/n_x+1/n_y))
+
+132.86-127.44+c(-1,1)*qt(.975,ns)*sp*sqrt(1/8+1/21)
+
+sp <- sqrt((9*var(g1)+9*var(g2))/18): Variance of g1 and g2: 18=10-1+10-1
+md+c(-1,1)*qt(.975, 18)*sp*sqrt(1/10+1/10) md=ybar-xbar
+
+Using R function t.test(g2,g1,paired=FALSE,var.equal=TRUE)$conf
+
+*Independent Growups without Pooling
+Y'-X' +/- t_df * SE
+SE=sqrt((s_1)^2/n_1 + (s_2)^2/n_2)
+
+num <- (15.34^2/8 + 18.23^2/21)^2
+den <- 15.34^4/8^2/7 + 18.23^4/21^2/20
+132.86-127.44+c(-1,1)*qt(0.975, mydf)*sqrt(15.34^2/8+18.23^2/21)
+
+A Type I error REJECTS a TRUE null hypothesis H_0 and a Type II error ACCEPTS a FALSE null hypothesis H_0.
+
+If you decrease the probability of making
+| a Type I error (rejecting a true hypothesis), you increase the probability of making a Type II error (accepting a false one) and vice versa.
+
+If an innocent man is convicted what type of error is this? 1: Type I
+Suppose a guilty person is not convicted. What type of error is this? Type II
+
+We choose C so that the probability of a Type I error, alpha, is .05 
+
+This means that alpha, the Type I error rate, is the probability of rejecting the null hypothesis when, in fact, it is correct. We don't want alpha too low because then we would never reject the null hypothesis even if it's false.
+
+SE of a sample mean is s/sqrt(n) where s is SD and n is sample size
+Choose C so that the probability that X is greater than C given H_0 is 5%. That is, P(X > C| H_0) is 5%. 
+ 
+3: qnorm(.95) is the value of X for which X>0.05 i.e. 5%
+
+| The 95th percentile of a standard normal distribution is 1.645 standard deviations from the mean, so in our example we have to set C to be 1.645 standard deviations MORE than our hypothesized mean of 30, that is, C = 30 + 1.645 * 1 = 31.645
+This means that if our OBSERVED (sample) mean X' >= C, then it's only a 5% chance that a random draw from this N(30,1) distribution is larger than C.
+32>31.645 and hence reject H0
+
+Recall the Z score is X'-mu divided by the standard error of the mean.
+In this example X'=32, mu=30 and the standard error is 10/sqrt(100)=1.
+2>1.645 and hence reject
+
+*** The general rule for rejection is if sqrt(n) * ( X' - mu) / s > Z_{1-alpha}.
+statistic is (X'-mu) / s/sqrt(n) which is standard normal.
+
+Suppose our first alternative, H_a, is that mu < mu_0. We would reject H_0 (and accept H_a) when our
+observed sample mean is significantly less than mu_0. That is, our test statistic (X'-mu) / s/sqrt(n) is less than Z_alpha. Specifically, it is more than 1.64 standard deviations to the left of the mean mu_0.
+
+| If we accept H_a, that the true mu is greater than the H_0 value mu_0 we would want our test statistic to be greater than 1.64 standard deviations from the mean.
+
+1: at least 1.64 std dev greater than mu_0
+
+ Your comparison tells you how "extreme" the test value is toward the alternative hypothesis. The p-value is the probability under the null hypothesis of obtaining evidence as or more extreme than your test statistic (obtained from your observed data) in the direction of the alternative hypothesis.
+
+So if the p-value (probability of seeing your test statistic) is small, then one of two things happens. EITHER H_0 is true and you have observed a rare event (in this unusual test statistic) OR H_0 is false.
+
+pt(q=2.5, df=15, lower.tail=FALSE): Probability x>q
+
+Quantile associated with 0.95 is qnorm(0.95)=1.644854
