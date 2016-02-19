@@ -52,6 +52,7 @@ for (i in 1:nosim){
 ##Statistics for the distribution of the sample means, sample variance 
 meansamplemeans<- mean(samplemeans)
 stdsamplemeans<- sd(samplemeans)
+varsamplemeans<-var(samplemeans)
 meansamplevars<- mean(samplevars)
 stdsamplevars<- sd(samplevars)
 meansnormalizedmeans<- mean(normalizedmeans)
@@ -61,10 +62,10 @@ stdnormalizedmeans<- sd(normalizedmeans)
 cummeans<-cumsum(rexp(nosim,lambda))/1:nosim
 cumvars<-cumsum((rexp(nosim,lambda)-cumsum(rexp(nosim,lambda))/1:nosim)^2)/1:nosim
 ```
-- The mean of the sample means is **5.0102835** rounded to **5** as compared to theoretical population mean of **5**
+- The mean of the sample means is **5.0063998** rounded to **5** as compared to theoretical population mean of **5**
 - From plots #1 and #2 below, it is clear that the distribution of the sample mean is centered around the population mean and is consistent with the population mean as the number of simulations becomes large.
 
-- The mean of the sample variances is **25.5296753** rounded to **26**  as compared to theoretical population variance of **25**
+- The mean of the sample variances is **25.5500328** rounded to **26**  as compared to theoretical population variance of **25**
 - Thus, from Plots #3 and #4 below, it is clear that the distribution of the sample variance is centered around the population variance and is consistent with the population variance as the simulations increase
 
 

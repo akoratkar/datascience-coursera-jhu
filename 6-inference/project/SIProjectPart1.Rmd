@@ -55,6 +55,7 @@ for (i in 1:nosim){
 ##Statistics for the distribution of the sample means, sample variance 
 meansamplemeans<- mean(samplemeans)
 stdsamplemeans<- sd(samplemeans)
+varsamplemeans<-var(samplemeans)
 meansamplevars<- mean(samplevars)
 stdsamplevars<- sd(samplevars)
 meansnormalizedmeans<- mean(normalizedmeans)

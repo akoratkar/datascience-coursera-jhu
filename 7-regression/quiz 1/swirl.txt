@@ -1,0 +1,69 @@
+﻿plot(child ~ parent, galton)
+
+plot(jitter(child,4) ~ parent,galton)
+
+regrline <- lm(child ~ parent, galton)
+
+abline(regrline, lwd=3, col='red')
+
+summary(regrline)
+
+| A coefficient will be within 2 standard errors of its estimate about 95% of the time. This means the slope of our regression is significantly different than either 0 or 1 since (.64629) +/- (2*.04114) is near neither 0 nor 1.
+
+So, parents "1 inch" above the mean in height tend to have children who are only .65 inches above the mean.
+
+
+
+The first equation says that the "errors" in our estimates, the residuals, have mean zero. In other words, the residuals are "balanced" among the data points; they're just as likely to be positive as negative. The second equation says that our residuals must be uncorrelated with our predictors, the parents’ height. This makes sense - if the residuals and predictors were correlated then you could make a better prediction and reduce the distances (residuals) between the actual outcomes and the predictions.
+
+fit <- lm(child ~ parent, galton)
+
+summary(fit)
+
+mean(fit$residuals)
+
+cov(fit$residuals, galton$parent)
+
+mch = ic + slope*mph
+
+sqe(ols.slope+sl,ols.intercept+ic) == deviance(fit) + sum(est(sl,ic)ˆ2 )
+sqe(ols.slope+sl,ols.intercept+ic) == sqe(ols.slope, ols.intercept) + sum(est(sl,ic)ˆ2 )
+
+ols.ic<-fit$coef[1]
+ols.slope <-fit$coef[2]
+
+lhs-rhs
+all.equal(lhs, rhs)
+
+varChild<-var(galton$child)
+varRes<-var(fit$residuals)
+varEst<-var(est(ols.slope, ols.ic))
+all.equal(varChild, varRes+varEst)
+
+var(data)=var(estimate)+var(residuals)
+
+
+efit <- lm(accel ~ mag+dist, attenu)
+mean(efit$residuals)
+cov(efit$residuals, attenu$mag)
+cov(efit$residuals, attenu$dist)
+
+
+As shown in the slides, the slope of the regression line is the correlation between the two sets of heights multiplied by the ratio of the standard deviations (childrens' to parents' or outcomes to
+predictors).
+
+cor(gpa_nor, gch_nor)
+
+l_nor <- lm(gch_nor ~ gpa_nor)
+
+Cor(X,Y) = Cov(X, Y)/S(X)*S(Y)
+
+If Y is the outcome and X is the predictor
+slope = Cor(Y,X)*S(Y)/S(X)
+=coef(lm(Y ~ X)[2])
+
+intercept = mean(Y)-slope*mean(X)
+=coef(lm(Y ~ X)[1])
+
+Y=interecept + slope*X
+If X and Y are normalized, slope = Cor(Y,X)

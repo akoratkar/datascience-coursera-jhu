@@ -1,0 +1,144 @@
+Swirl 
+
+fit<-lm(count~spray, data=InsectSprays)
+summary(fit)$coef
+est<-summary(fit)$coef[,1]
+
+R by default uses the first level as the
+reference against which the other levels or groups are compared when doing its t-tests (shown in the
+third column).
+
+the Intercept is the mean of the reference group, in this case sprayA, and the other Estimates are the distances of the other groups' means from the reference mean.
+
+mean(sB)<-mean(sA)+Intercept Estimate for B
+
+Now omit the intercept
+nfit<-lm(count~spray-1, data=InsectSprays)
+summary(nfit)$coef: This puts the y-axis at sA mean and the estimates are the means
+
+In above examples, A was the reference. To change reference to C
+spray2<-relevel(InsectSprays$spray, "C")
+
+fit2<-lm(count~spray, data=InsectSprays)
+summary(fit2)$coef
+
+Spray B's T-Value: (fit$coef[2]-fit$coef[3])/1.6011 i.e. (spray b coeff minus spray c coeff)/std err
+
+----xx---
+
+dim(hunger)
+names(hunger)
+
+fit<-lm(Numeric~Year, data=hunger)
+summary(fit)$coef
+
+As time goes on, the rate of hunger decreases
+Intercept indicates the percentage of hungry children at year 0
+
+Subset for females only
+lmF <- lm(Numeric[Sex=="Female"] ~ Year[Sex=="Female"],hunger)
+
+Subset for males only
+lmM <- lm(Numeric[Sex=="Male"] ~ Year[Sex=="Male"],hunger)
+Negative slope: lmM$coef[2]
+
+dependent ~ independent1 + independent2
+
+lmBoth<-lm(Numeric~Year+Sex, data=hunger)
+summary(lmBoth)
+
+The intercept is the percentage of females hungry at year 0 and the intercept plus hunger$SexMale is
+the percentage of males hungry at year 0
+The estimate for hunger$Year represent the annual decrease in percentage of hungry children of both genders
+
+lmInter<-lm(Numeric~Year+Sex+Sex*Year, data=hunger)
+
+Call:
+lm(formula = Numeric ~ Year + Sex + Sex * Year, data = hunger)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-25.913 -11.248  -1.853   7.087  46.146 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  603.50580  171.05519   3.528 0.000439 ***
+Year          -0.29340    0.08547  -3.433 0.000623 ***
+SexMale       61.94772  241.90858   0.256 0.797946    
+Year:SexMale  -0.03000    0.12087  -0.248 0.804022    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 13.21 on 944 degrees of freedom
+Multiple R-squared:  0.03181,	Adjusted R-squared:  0.02874 
+F-statistic: 10.34 on 3 and 944 DF,  p-value: 1.064e-06
+
+The expected change in the
+outcome for a unit change in the other predictor is the coefficient of that changing predictor + the
+coefficient of the interaction * the value of the predictor held constant.
+The estimate associated with Year:SexMale represents the distance of the annual change in percent of
+males from that of females.
+
+Hi = b0 + (b1*Ii) + (b2*Yi)+ (b3*Ii*Yi) + ei
+
+
+-----x-----
+
+fit <- lm(y ~ x, out2)
+
+plot displays residuals versus fitted values. Residuals should be uncorrelated
+with the fit, and should be independent and (almost) identically disributed with mean zero
+plot(fit, which=1)
+
+remove outlier in row 1
+fitno <- lm(y ~ x, out2[-1,]): Uncorrelated with fit and mean is zero
+
+Influence of row 1
+coef(fit)-coef(fitno)
+
+To calculate influence for all rows
+head(dfbeta(fit))
+
+1 minus the ratio of residuals (with/without) is a measure of influence, near 0 for points which are not influential, and near 1 for points which are.
+
+resno <- out2[1, "y"] - predict(fitno, out2[1,])
+influence<-1-resid(fit)[1]/resno
+
+To calculate for all
+head(hatvalues(fit)) 
+
+Now, standard deviation of residuals
+sigma <- sqrt(deviance(fit)/df.residual(fit))
+
+Then, standardized residual
+rstd <- resid(fit)/(sigma * sqrt(1-hatvalues(fit)))
+
+for all rows,
+head(cbind(rstd, rstandard(fit)))
+
+A Scale-Location plot shows the square root of standardized residuals against fitted values. Use
+plot(fit, which=3) to display it.
+
+A QQ plot of standardized residuals
+against normal with constant variance is of interest. Use 
+plot(fit, which=2) to display this diagnostic plot.
+
+Studentized residuals, (sometimes called externally Studentized residuals,) estimate the standard
+deviations of individual residuals using, in addition to individual hat values, the deviance of a modelwhich leaves the associated sample out. We'll illustrate using the outlier. Recalling that the model we called fitno omits the outlier sample, calculate the sample standard deviation of fitno's residual by dividing its deviance, by its residual degrees of freedom and taking the square root. Store the resultin a variable called sigma1.
+
+sigma1 <- sqrt(deviance(fitno)/df.residual(fitno))
+
+Studentized residual for the outlier sample
+resid(fit)[1]/(sigma1*sqrt(1-hatvalues(fit)[1]))
+
+for all rows
+head(rstudent(fit))
+
+Difference in predicted values
+dy<-predict(fitno, out2)-predict(fit, out2)
+
+sum(dy^2)/(2*sigma^2)
+= cooks.distance(fit)[1]
+
+Plotting Cooks Distance
+plot(fit, which=5)

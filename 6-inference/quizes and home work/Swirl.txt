@@ -241,6 +241,28 @@ observed sample mean is significantly less than mu_0. That is, our test statisti
 
 1: at least 1.64 std dev greater than mu_0
 
+H_a: mu_a not equal to mu_0
+This means that our
+| test statistic (X'-mu) / s/sqrt(n) is less than .025, Z_(alpha/2), or greater than
+| .975, Z_(1-alpha/2).
+The X values in the
+| shaded portions are values which are at least 1.96 standard deviations away from
+| the hypothesized mean.
+
+ reject if our test statistic is larger than qt(.975, 15) or smaller than qt(.025,
+| 15)
+
+Bottom line here is if you fail to reject the one sided test, you know that you
+| will fail to reject the two sided.
+
+T-Statistics 3: the number of estimated std errors between the sample and hypothesized means
+
+Note the 95% confidence interval, 0.8310296 1.1629160, returned by t.test. It does
+| not contain the hypothesized population mean 0 so we're pretty confident we can
+| safely reject the hypothesis.
+
+if a (1-alpha)% interval contains mu_0, then we fail to reject H_0
+
  Your comparison tells you how "extreme" the test value is toward the alternative hypothesis. The p-value is the probability under the null hypothesis of obtaining evidence as or more extreme than your test statistic (obtained from your observed data) in the direction of the alternative hypothesis.
 
 So if the p-value (probability of seeing your test statistic) is small, then one of two things happens. EITHER H_0 is true and you have observed a rare event (in this unusual test statistic) OR H_0 is false.
@@ -248,3 +270,106 @@ So if the p-value (probability of seeing your test statistic) is small, then one
 pt(q=2.5, df=15, lower.tail=FALSE): Probability x>q
 
 Quantile associated with 0.95 is qnorm(0.95)=1.644854
+
+p-value is the smallest value of alpha at which you
+| will reject the null hypothesis
+
+pnorm(2): P value
+[1] 0.9772499: somewhere between .95 (where we rejected) and .99 (where we
+| failed to reject). 
+
+ pnorm(2,lower.tail=FALSE) 
+[1] 0.02275013: P value
+
+ The general rule is that if the p-value is less than the specified alpha you
+| reject the null hypothesis and if it's greater you fail to reject.
+
+> pbinom(7, size=8, prob=.5,
++        lower.tail=TRUE)
+[1] 0.9960938
+
+> ppois(9, lambda=5,
++        lower.tail=FALSE)
+[1] 0.03182806
+Power
+alpha: Type 1 error: Reject a true NULL H
+beta: Type 2 error: Accept a false NULL H
+1-beta=power: Accept a true ALT H
+
+t Statistic: (X'-30)/(s/sqrt(n))
+SE: s/sqrt(n)
+
+power is the probability that the true mean mu is greater than the (1-alpha) quantile or qnorm(.95).
+It's the area under the blue curve (H_a) to the right of the vertical line.
+
+H_0, X'~ N(mu_0, sigma^2/n) and under H_a, X'~ N(mu_a, sigma^2/n) 
+
+First, power is a function that depends on a specific value of an alternative
+| mean, mu_a, which is any value greater than mu_0, the mean hypothesized by H_0.
+
+if mu_a is much bigger than mu_0=30 then the power (probability) is bigger
+| than if mu_a is close to 30. As mu_a approaches 30, the mean under H_0, the power
+| approaches alpha.
+ 
+Z=(X'-30)/(sigma/sqrt(n))
+Ha: X' > Z_95 * (sigma/sqrt(n)) + 30, right?
+
+pnorm, which gives us the probability that a valuedrawn from a normal distribution is greater or less than/equal to a specifiedquantile argument depending on the flag lower.tail.
+
+Power: pnorm with the quantile 30 + Z_95 * (sigma/sqrt(n)) and specify mu_a as our mean argument
+
+30 + Z_95 * (sigma/sqrt(n)) represents the point at which our vertical line falls. It's the point on the null distribution at the (1-alpha) level.
+
+z<-pnorm(0.95)
+pnorm(30+z, mean=30, sd=1, lower.tail=FALSE)
+[1] 0.05
+With the mean set to mu_0 the two distributions, null and alternative, are the same and power=alpha.
+
+pnorm(30+z, mean=32, sd=1, lower.tail=FALSE)
+[1] 0.63876
+64% as opposed to 5%. When the sample mean is
+| quite different from (many standard errors greater than) the mean hypothesized by
+| the null hypothesis, the probability of rejecting H_0 when it is false is much
+| higher. That is power!
+
+> pnorm(30+z*2, mean=32, sd=2, lower.tail=FALSE)
+[1] 0.259511
+
+So keeping the effect size (the ratio delta/sd) constant preserved the power.
+
+ Since power goes up as alpha gets larger would the power of a one-sided test be
+| greater or less than the power of the associated two sided test? Greater
+
+Suppose H_a says that mu > mu_0. Then power = 1 - beta = Prob ( X' > mu_0 +
+| z_(1-alpha) * sigma/sqrt(n)) assuming that X'~ N(mu_a,sigma^2/n).
+
+Instead only sqrt(n)*(mu_a - mu_0) /sigma is needed. The quantity (mu_a - mu_0) /
+| sigma is called the EFFECT SIZE.
+
+P( (X' - mu_0)/(S /sqrt(n)) > t_(1-alpha,
+| n-1) 
+
+
+> power.t.test(n = 16, delta = 2 / 4, sd=1, type = "one.sample", alt = "one.sided")$power
+[1] 0.6040329
+
+> power.t.test(n = 16, delta = 2 , sd=4, type = "one.sample", alt = "one.sided")$power 
+[1] 0.6040329
+
+> power.t.test(n = 16, delta = 100 , sd=200, type = "one.sample", alt = "one.sided")$power
+[1] 0.6040329
+
+
+> power.t.test(power = .8, delta = 2 / 4, sd=1, type = "one.sample", alt ="one.sided")$n
+[1] 26.13751
+
+> power.t.test(power = .8, delta = 2, sd=4, type = "one.sample", alt ="one.sided")$n
+[1] 26.13751
+
+> power.t.test(power = .8, n=26, sd=1, type = "one.sample", alt ="one.sided")$delta
+[1] 0.5013986
+
+Suppose H_0 proposes mu = mu_0 and H_a proposes that mu < mu_0. Which of the
+following is true?
+
+2: the smaller mu_a-mu_0 the more powerful the test

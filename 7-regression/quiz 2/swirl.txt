@@ -1,0 +1,80 @@
+﻿However, since our linear model with one predictor requires two
+parameters we have only (n-2) degrees of freedom. Therefore, to calculate an "average" squared residual to estimate the variance we use the formula 1/(n-2) * (the sum of the squared residuals).
+
+fit<-lm(child~parent, data=galton)
+sqrt(sum(fit$residuals^2) / (n - 2)) ##same as sigma as below
+summary(fit)$sigma
+sqrt(deviance(fit)/(n-2))
+
+Total Variation = Residual Variation + Regression Variation
+
+Total Variation=Yi-mean(Yi)
+Residual Variation=Yi-Yi_hat
+
+mu <- mean(galton$child) : mean
+sTot<-sum((galton$child-mu)^2) : Total Variation
+sRes <- deviance(fit) : Residual Variation.
+1-sRes/sTot : This is R2. It is the percentage of variation explained by the regression model.
+summary(fit)$r.squared : same as above
+
+cor(galton$parent,galton$child)^2
+
+---x---
+
+When we perform a regression in one variable, such as lm(child ~ parent, galton), we get two coefficients, a slope and an intercept. The intercept is really the coefficient of a special regressor which has the same value, 1, at every sample. The function, lm, includes this regressor by default.
+
+ones <- rep(1, nrow(galton))
+lm(child ~ ones + parent-1, galton)
+lm(child ~ parent, galton) : Same as above
+
+Subtracting the means to eliminate the intercept is a special case of a general technique which is sometimes called Gaussian Elimination.
+
+A residual is the difference between a variable and its predicted value. If, for example,
+child-mean(child) is a residual, then mean(child) must be its predicted value. But mean(child) is a
+constant, so the regressor would be a constant.
+
+The mean of a variable is the coefficient of its regression against the constant, 1
+Thus, subtracting the mean is equivalent to replacing a variable by the residual of its regression against 1
+
+lm(child ~ 1, galton) : Same as mu
+
+##Regression in 3 variables
+fit <- lm(Volume ~ Girth + Height + Constant -1, trees)
+
+
+trees2 <- eliminate("Girth", trees)
+View(trees2)
+
+##Regression in 2 variables
+fit2 <-lm(Volume ~ Height + Constant -1, trees2)
+
+lapply(list(fit, fit2), coef)
+
+##Regression in 1 variable
+lm(Volume ~ Constant - 1, data = eliminate("Height", trees2))
+
+Using only single-variable regression, how can the problem be reduced to a problem with only N-1
+regressors?
+> Pick any regressor and replace the outcome and all other regressors by their residuals against the chosen one.
+
+---x---
+
+all<-lm(Fertility~ Agriculture + Catholic + Education + Examination +Infant.Mortality, swiss)
+summary(all)
+
+The "*" at the far end of the row indicates that the influence of Agriculture on Fertility is
+significant. At what alpha level is the t-test of Agriculture significant? 0.05
+
+summary(lm(Fertility ~ Agriculture, swiss))
+
+The interesting point is that the sign of the Agriculture coefficient changed from negative (when all the variables were included in the model) to positive (when the model only considered Agriculture). Obviously the presence of the other factors affects the influence Agriculture has on Fertility.
+
+cor(swiss$Examination, swiss$Education) : +vef
+cor(swiss$Agriculture, swiss$Education) : -ve
+
+ec<-swiss$Examination + swiss$Catholic
+efit<-lm(Fertility~ Agriculture + Catholic + Education + Examination +Infant.Mortality + ec, swiss)
+
+
+all$coefficients-efit$coefficients
+Adding ec doesn't change the model
