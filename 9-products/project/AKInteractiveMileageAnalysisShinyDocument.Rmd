@@ -1,0 +1,54 @@
+---
+title: "Mileage Analysis of Auto & Manual Cars (mtcars)"
+author: "AK"
+date: "April 5, 2016"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Application: Overview
+This R Markdown document is made interactive using Shiny. It enables the user to perform analysis of
+mileage (mpg) for automatic and manual transmission cars. Employing regression modeling, it
+enables user to explore the relationship between fuel efficiency and a set of variables in mtcars..
+This is shinification of the project I did for the project for the Regression Modeling Course.
+### Application: Inputs and Outputs
+The user can choose one of the four regression models using the radio buttons on the left. A summary of relationships between all the variables in the mtcars dataset has been presented in the section below these options. The application displays the following information on the right for the chosen model:
+
+- Summary Statistics for the Chosen Model (Tab 1)
+- Plot for the Chosen Model (Tab 2)
+
+It also presents 
+
+- Variance Table for Nested Rregression Models (Tab 3)
+- Pairwise Plot for the Significant Variables (Tab 4)
+
+The user can compare the regression model output to conclude the desired model to use.
+
+I have embedded the entire AKMileageAnalysisShinyApp application within this R Markdown document using the `shinyAppDir` function. Please scroll down/click on the link and play with it.
+```{r embeddedapp, echo = FALSE, results='asis'}
+
+# Here is a direct link to the AKMileageAnalyisisShinyApp on shinyapps.io
+cat('<br>')
+cat('<br>')
+cat('<a href="https://akoratkar.shinyapps.io/AKMileageAnalysisShinyApp/">Mileage Analysis Shiny App on shinyapps.io</a>')
+
+# Ignore below since the app embedding works on the local machine but does not when uploaded to shinyapps.
+
+# shinyAppDir(
+# "AKMileageAnalysisShinyApp",
+# options=list(
+#   width="100%", height="800"
+#  )
+# )
+
+```
+
+
+
+
+
+
+
