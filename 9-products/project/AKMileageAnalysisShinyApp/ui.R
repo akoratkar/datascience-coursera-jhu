@@ -32,20 +32,26 @@ shinyUI(fluidPage(
     # Show the results of the regression model
     mainPanel(
 
-      h4("Legend"),
+      withTags({
+      a(href="https://akoratkar.shinyapps.io/AKInteractiveMileageAnalysisShinyDocument/", "Click here for Mileage Analysis Shiny App R Markdown Documentation")
+      }),
+      
+      h4("Tab Legend"),
 
       h5("0: Model Summary & 1: Model Plot depend on the chosen model."),
-      h5("2: Variance Table & 3: Pair Wise Plot are for the dataset."),
+      h5("2: Pair Wise Plot & 3: MPG vs Transmission Plot are common for the mtcars dataset."),
 
       tabsetPanel(
 
         tabPanel("0: Model Summary", verbatimTextOutput("summary")),
         tabPanel("1: Model Plot", plotOutput("modelplot")),
-        tabPanel("2: Nested Regression Variance Table", verbatimTextOutput("variancetable")),
-        tabPanel("3: Pair Wise Plot", plotOutput("pairwiseplot"))
-        #tabPanel("4: MPG vs Transmission Plot", plotOutput("mpgvsamplot"))
-        )
+        tabPanel("2: Pair Wise Plot", plotOutput("pairwiseplot")),
+        tabPanel("3: MPG vs Transmission Plot", plotOutput("mpgvsamplot"))
+        ),
+      
+      verbatimTextOutput("anova")
 
     )
+    
   )
 ))

@@ -2,8 +2,8 @@ name: AKMileageAnalysisShinyApp
 account: akoratkar
 server: shinyapps.io
 appId: 92471
-bundleId: 412100
+bundleId: 412213
 url: https://akoratkar.shinyapps.io/AKMileageAnalysisShinyApp/
-when: 1459963482.99172
+when: 1459970724.87233
 asMultiple: FALSE
 asStatic: FALSE

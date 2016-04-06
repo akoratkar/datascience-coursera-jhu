@@ -6,7 +6,7 @@ output: html_document
 runtime: shiny
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ### Application: Overview
@@ -22,12 +22,12 @@ The user can choose one of the four regression models using the radio buttons on
 
 It also presents 
 
-- Variance Table for Nested Rregression Models (Tab 3)
-- Pairwise Plot for the Significant Variables (Tab 4)
+- Pairwise Plot for the Significant Variables (Tab 3)
+- MPG vs Transmission (Tab 4)
 
 The user can compare the regression model output to conclude the desired model to use.
 
-I have embedded the entire AKMileageAnalysisShinyApp application within this R Markdown document using the `shinyAppDir` function. Please scroll down/click on the link and play with it.
+I have embedded the entire AKMileageAnalysisShinyApp application within this R Markdown document. Please scroll down/click on the link to launch the application and play with it. 
 ```{r embeddedapp, echo = FALSE, results='asis'}
 
 # Here is a direct link to the AKMileageAnalyisisShinyApp on shinyapps.io
@@ -46,6 +46,26 @@ cat('<a href="https://akoratkar.shinyapps.io/AKMileageAnalysisShinyApp/">Mileage
 
 ```
 
+Don't peek! :)
+
+The following sections presents the author's analysis and conclusion. The application user should do her own analysis and conclude based on the output presented.
+
+### Author's Analysis
+
+- Model: lm(mpg~am)
+Mean MPG for Auto Transmission is 17.1473684 and Mean MPG for Manual Transmission is 24.3923077
+The value of R-Squared indicates that only 35.9798943 % regression variance is explained by the lm(mpg~am) model. Hence, one should consider other variables that are included in the mtcars data set for more precise analysis.
+
+- Models: lm(mpg~wt+am), lm(mpg~disp+am) and lm mpg~cyl+am)
+The above models indicate that when wt and disp variables are considered separately, appendng the am does not improve the model significantly (smaller F changes), but there is some change (at 0.05) when we consider cyl with am.
+
+- Model: lm(mpg~wt+cyl+am)
+R-Squared indicates that a high 83.0338317 % regression variance is explained by the model. We conclude wt and cyl are significant contributors to mpg and lm(mpg~wt+cyl+am, data=mtcars) is the most optimal model.
+
+### Author's Conclusion
+Per the basic linear regression model that only considers the relationship between mpg and transmission type, the mean mpg for cars with automatic transmission is 17.147 and that for manual transmission is 24.392, with a mean difference of 17.147. Thus, excluding the effect of other variables, the manual transmission cars have better fuel efficiency (mileage) than the automatic tranmission cars.
+
+Per the most optimal multi-variable linear regression model that considers the relationshiop between mpg and a set of other variables like weight, number of cylinders along with transmission type, the mpg difference between manual and automatic reduces to 0.1765 mpg at the mean weight and cyl, still. Thus, when other variables considered, manual transmission cars have marginally better fuel efficiency than the automatic cars.
 
 
 
