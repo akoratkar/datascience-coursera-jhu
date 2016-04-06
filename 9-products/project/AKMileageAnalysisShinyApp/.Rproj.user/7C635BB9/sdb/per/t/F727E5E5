@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Mileage Analysis of Auto & Manual Cars (mtcars)\"\nauthor: \"AK\"\ndate: \"April 5, 2016\"\noutput: html_document\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n### Application: Overview\nThis R Markdown document is made interactive using Shiny. It enables the user to perform analysis of\nmileage (mpg) for automatic and manual transmission cars. Employing regression modeling, it\nenables user to explore the relationship between fuel efficiency and a set of variables in mtcars..\nThis is shinification of the project I did for the project for the Regression Modeling Course.\n### Application: Inputs and Outputs\nThe user can choose one of the four regression models using the radio buttons on the left. A summary of relationships between all the variables in the mtcars dataset has been presented in the section below these options. The application displays the following information on the right for the chosen model:\n\n- Summary Statistics for the Chosen Model (Tab 1)\n- Plot for the Chosen Model (Tab 2)\n\nIt also presents \n\n- Variance Table for Nested Rregression Models (Tab 3)\n- Pairwise Plot for the Significant Variables (Tab 4)\n\nThe user can compare the regression model output to conclude the desired model to use.\n\nI have embedded the entire AKMileageAnalysisShinyApp application within this R Markdown document using the `shinyAppDir` function. Please scroll down and play with it.\n```{r embeddedapp, echo = FALSE}\nshinyAppDir(\n \"AKMileageAnalysisShinyApp\",\n options=list(\n    width=\"100%\", height=\"800\"\n  )\n)\n```\n\n\n\n\n\n\n\n",
+    "created" : 1459957540260.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "2869523349",
+    "id" : "F727E5E5",
+    "lastKnownWriteTime" : 1459957587,
+    "last_content_update" : 1459957587326,
+    "path" : "C:/Users/an260736.WIPRO/mysource/k125-datascience-jhu/9-products/project/AKInteractiveMileageAnalysisShinyDocument.Rmd",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

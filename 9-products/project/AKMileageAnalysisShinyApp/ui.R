@@ -38,15 +38,15 @@ shinyUI(fluidPage(
       
       h4("Tab Legend"),
 
-      h5("0: Model Summary & 1: Model Plot depend on the chosen model."),
-      h5("2: Pair Wise Plot & 3: MPG vs Transmission Plot are common for the mtcars dataset."),
+      h5("1: Model Summary & 2: Model Plot for the chosen model"),
+      h5("3: Pair Wise Plot & 4: MPG vs Transmission Plot are common for the mtcars dataset"),
 
       tabsetPanel(
 
-        tabPanel("0: Model Summary", verbatimTextOutput("summary")),
-        tabPanel("1: Model Plot", plotOutput("modelplot")),
-        tabPanel("2: Pair Wise Plot", plotOutput("pairwiseplot")),
-        tabPanel("3: MPG vs Transmission Plot", plotOutput("mpgvsamplot"))
+        tabPanel("1: Model Summary", verbatimTextOutput("summary")),
+        tabPanel("2: Model Plot", plotOutput("modelplot")),
+        tabPanel("3: Pair Wise Plot", plotOutput("pairwiseplot")),
+        tabPanel("4: MPG vs Transmission Plot", plotOutput("mpgvsamplot"))
         ),
       
       verbatimTextOutput("anova")

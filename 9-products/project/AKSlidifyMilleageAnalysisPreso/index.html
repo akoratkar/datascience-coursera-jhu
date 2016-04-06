@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mileage Analysis of Auto &amp; Manual Cars</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Mileage Analysis of Auto &amp; Manual Cars">
+  <meta name="author" content="AK">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/slides" 
+    src="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Mileage Analysis of Auto &amp; Manual Cars</h1>
+    <h2>Shiny Application for Regression Modeling for Mileage Analysis with mtcars</h2>
+    <p>AK<br/>Life Long Learner</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Objective &amp; Features of the Shiny Application</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>The Shiny Appication enables the user to analyze the mtcars dataset and compare the fuel efficiency of the automatic and manual transmission cars.</p></li>
+<li><p>Left Pane: The user can choose from multiple linear regression models (radio buttons)</p></li>
+<li><p>Right Pane: The App displays the following to help user select the optimal model</p>
+
+<ul>
+<li>Tab 1: Model Summary (chosen model)</li>
+<li>Tab 2: Model Plot (chosen model)</li>
+<li>Tab 3: Pair Wise Plot (for data set)</li>
+<li>Tab 4: MPG vs Transmission Plot</li>
+</ul></li>
+<li><p>Bottom Pane: The App displays variance table ifor analyzing multivariable nested models.</p></li>
+<li><p><a href="https://akoratkar.shinyapps.io/AKMileageAnalysisShinyApp/">Link to Mileage Analysis Shiny App on shinyapps.io</a></p></li>
+<li><p><a href="https://akoratkar.shinyapps.io/AKInteractiveMileageAnalysisShinyDocument/">Link to Mileage Analysis Shiny App R Markdown Documentation on shinyapps.io</a></p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Pair-wise Plot for mtcars</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>This plot gives the user a high level view of the relationship among significant variables
+<img src="data:image/png;base64,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" alt="plot of chunk pairwiseplot"></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Guidelines for analyzing the regression models</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Review the pair-wise plot and mpg vs am plot to understand the variable relationships</li>
+<li>Run each regression model. Carefully review the R-Squared values. E.g.</li>
+</ul>
+
+<pre><code class="r">  summary(lm(mpg~wt+cyl+am, data=mtcars))$r.squared
+</code></pre>
+
+<pre><code>## [1] 0.8303383
+</code></pre>
+
+<ul>
+<li>Review the variable table for the nested model. E.g.</li>
+<li>Choose the model with the highest R-Squared value</li>
+</ul>
+
+<pre><code>##      Res.Df             RSS                Df        Sum of Sq         
+##  &quot;Min.   :27.00  &quot; &quot;Min.   :188.4  &quot; &quot;Min.   :1  &quot; &quot;Min.   : 0.06657  &quot;
+##  &quot;1st Qu.:27.75  &quot; &quot;1st Qu.:188.5  &quot; &quot;1st Qu.:1  &quot; &quot;1st Qu.: 1.37308  &quot;
+##        F                   Pr(&gt;F)          
+##  &quot;Min.   : 0.009538  &quot; &quot;Min.   :0.001497  &quot;
+##  &quot;1st Qu.: 0.196751  &quot; &quot;1st Qu.:0.271090  &quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Sample Model Output: lm(mpg~wt+cyl+am)</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>## 
+## Call:
+## lm(formula = mpg ~ wt + cyl + am, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.1735 -1.5340 -0.5386  1.5864  6.0812 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  39.4179     2.6415  14.923 7.42e-15 ***
+## wt           -3.1251     0.9109  -3.431  0.00189 ** 
+## cyl          -1.5102     0.4223  -3.576  0.00129 ** 
+## am            0.1765     1.3045   0.135  0.89334    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.612 on 28 degrees of freedom
+## Multiple R-squared:  0.8303, Adjusted R-squared:  0.8122 
+## F-statistic: 45.68 on 3 and 28 DF,  p-value: 6.51e-11
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Objective &amp; Features of the Shiny Application'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Pair-wise Plot for mtcars'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Guidelines for analyzing the regression models'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Sample Model Output: lm(mpg~wt+cyl+am)'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

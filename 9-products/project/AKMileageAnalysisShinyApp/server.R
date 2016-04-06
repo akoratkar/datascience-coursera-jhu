@@ -76,7 +76,7 @@ shinyServer(function(input, output) {
   output$pairwiseplot <- renderPlot({
 
     mtcars_wca <- mtcars[, c(1, 2, 6, 9)]
-    pairs(mtcars_wca, panel=panel.smooth,col=11 + mtcars_wca$w, main="Plot 2: Pairwise graph for mpg, cyl, wt, am")
+    pairs(mtcars_wca, panel=panel.smooth,col=11 + mtcars_wca$w, main="Plot 2: Pairwise plot for mpg, cyl, wt, am")
   })
 
   # Plot 4: MPG vs Transmission Type

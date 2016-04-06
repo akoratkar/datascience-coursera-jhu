@@ -27,6 +27,13 @@ It also presents
 
 The user can compare the regression model output to conclude the desired model to use.
 
+Guidelines for performig the Analysis:
+- Review the pair-wise plot to understand the variable relationships
+- Review the MPG vs Transmission plot
+- Run each regression model
+- Carefully review the R-Squared values for each model and compare
+- Choose the model with the highest R-Sqaured value
+
 I have embedded the entire AKMileageAnalysisShinyApp application within this R Markdown document. Please scroll down/click on the link to launch the application and play with it. 
 ```{r embeddedapp, echo = FALSE, results='asis'}
 
@@ -35,7 +42,7 @@ cat('<br>')
 cat('<br>')
 cat('<a href="https://akoratkar.shinyapps.io/AKMileageAnalysisShinyApp/">Mileage Analysis Shiny App on shinyapps.io</a>')
 
-# Ignore below since the app embedding works on the local machine but does not when uploaded to shinyapps.
+# Ignore below since the app embedding works on the local machine only but does not when uploaded to shinyapps. Leaving the code to future reference.
 
 # shinyAppDir(
 # "AKMileageAnalysisShinyApp",

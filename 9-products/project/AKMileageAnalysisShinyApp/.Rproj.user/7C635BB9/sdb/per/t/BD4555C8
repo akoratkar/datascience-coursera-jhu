@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#\n# This is the user-interface definition of a Shiny web application for an analysis of\n# mileage (mpg) for automatic and manual transmission cars. Employing regression modeling, it\n# further explores the relationship between fuel efficiency and a set of variables in mtcars..\n# This is shinification of the project I did for the project for the Regression Modeling Course.\n#\n\nlibrary(shiny)\n\n# Define UI for application that lets the choose the regression model and then presents the\n# the results of the same.\nshinyUI(fluidPage(\n\n  # Application title\n  titlePanel(\"Regression Modeling Application for Mileage Analysis\"),\n\n  # Sidebar with radio buttons to choose the desired regression model\n  sidebarLayout(\n    sidebarPanel(\n\n      radioButtons(\"modeltype\", \"Choose the Regression Model to run:\", c(\"Basic Regression (outcome:mpg, regressor:am)\" = \"lm\",\n                                                                  \"Multiple Regression (outcome: mpg, regressor: wt+am)\" = \"lm_wt_am\",\n                                                                  \"Multiple Regression (outcome: mpg, regressor: disp+am)\" = \"lm_disp_am\",\n                                                                  \"Multiple Regression (outcome: mpg, regressor: cyl+am)\" = \"lm_cyl_am\",\n                                                                  \"Multiple Regression (outcome: mpg, regressor: wt+cyl+am)\" = \"lm_wt_cyl_am\")),\n\n      h5(\"------------------------------------------------\"),\n      h5(helpText(\"Summary of all variables\")),\n      verbatimTextOutput(\"allsummary\")\n    ),\n\n    # Show the results of the regression model\n    mainPanel(\n\n      h4(\"Legend\"),\n\n      h5(\"0: Model Summary & 1: Model Plot depend on the chosen model.\"),\n      h5(\"2: Variance Table & 3: Pair Wise Plot are for the dataset.\"),\n\n      tabsetPanel(\n\n        tabPanel(\"0: Model Summary\", verbatimTextOutput(\"summary\")),\n        tabPanel(\"1: Model Plot\", plotOutput(\"modelplot\")),\n        tabPanel(\"2: Nested Regression Variance Table\", verbatimTextOutput(\"variancetable\")),\n        tabPanel(\"3: Pair Wise Plot\", plotOutput(\"pairwiseplot\"))\n        #tabPanel(\"4: MPG vs Transmission Plot\", plotOutput(\"mpgvsamplot\"))\n        )\n\n    )\n  )\n))\n",
+    "created" : 1459957532797.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "324565348",
+    "id" : "BD4555C8",
+    "lastKnownWriteTime" : 1459922146,
+    "last_content_update" : 1459922146,
+    "path" : "C:/Users/an260736.WIPRO/mysource/k125-datascience-jhu/9-products/project/AKMileageAnalysisShinyApp/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
